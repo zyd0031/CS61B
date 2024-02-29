@@ -5,8 +5,6 @@ import static org.junit.Assert.*;
 import byog.TileEngine.TERenderer;
 import byog.TileEngine.TETile;
 import byog.TileEngine.Tileset;
-
-
 import java.util.Random;
 
 /**
@@ -87,7 +85,7 @@ public class HexWorld {
     public static TETile[][] initializeTeTile(int width, int height){
         TETile[][] world = new TETile[width][height];
         for (int x = 0; x < width; x++) {
-            for (int y = 0; y < world.length; y++) {
+            for (int y = 0; y < height; y++) {
                 world[x][y] = Tileset.NOTHING;
             }
         }
@@ -100,8 +98,7 @@ public class HexWorld {
         TERenderer ter = new TERenderer();
         ter.initialize(width, height);
         Position p = new Position(30, 45);
-        TETile[][] world = new TETile[width][height];
-        world = initializeTeTile(width, height);
+        TETile[][] world = initializeTeTile(width, height);
         drawHexagonWorld(world, p, 4);
         ter.renderFrame(world);
     }
