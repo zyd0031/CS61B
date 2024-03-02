@@ -1,6 +1,4 @@
 package byog.Core;
-import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 import java.util.Random;
 import byog.TileEngine.TETile;
@@ -47,10 +45,10 @@ public class Room {
     }
 
     /** if cannot add room --> return true */
-    private static boolean  isOutOfBoundRoom(TETile[][] world, Room room){
-        int maxX = world.length - 1;
-        int maxY = world[0].length - 1;
-        int[] bounds = new int[]{0, maxX, 0, maxY};
+    private static boolean  isOutOfBoundRoom(Room room){
+        int maxX = Game.WIDTH - 2;
+        int maxY = Game.HEIGHT - 2;
+        int[] bounds = new int[]{1, maxX, 1, maxY};
         return isOutOfBound(bounds, room.BottemLeftPosition) || 
                isOutOfBound(bounds, room.BottemRightPosition) || 
                isOutOfBound(bounds, room.TopLeftPosition) || 
@@ -81,17 +79,17 @@ public class Room {
     }
 
     /** generate a random room */
-    private static Room generateRoom(TETile[][] world, Random rand){
-        int width = rand.nextInt(3) * 2 + 5;
-        int height = rand.nextInt(3) * 2 + 5;
-        int x = rand.nextInt(world.length - 2) + 1;
-        int y = rand.nextInt(world[0].length - 2) + 1;
+    private static Room generateRoom(Random rand){
+        int width = rand.nextInt(3) * 2 + 3;
+        int height = rand.nextInt(3) * 2 + 3;
+        int x = rand.nextInt(Game.WIDTH - 2) + 1;
+        int y = rand.nextInt(Game.HEIGHT - 2) + 1;
         return new Room(new Position(x, y), width, height);
     }
 
     /** return true if can add room */
     private static boolean canAddRoom(TETile[][] world, Room room, List<Room> rooms){
-        if (isOutOfBoundRoom(world, room)){
+        if (isOutOfBoundRoom(room)){
             return false;
         }
         for (Room r : rooms) {
@@ -105,7 +103,7 @@ public class Room {
     private static List<Room> addRooms(TETile[][] world, Random rand, List<Room> rooms){
         int numRoomTries = rand.nextInt(200);
         for (int i = 0; i < numRoomTries; i++) {
-            Room newRoom = generateRoom(world, rand);
+            Room newRoom = generateRoom(rand);
             if (canAddRoom(world, newRoom, rooms)){
                 rooms.add(newRoom);
             }
@@ -120,21 +118,6 @@ public class Room {
         int maxX = bounds[1];
         int minY = bounds[2];
         int maxY = bounds[3];
-
-        // for (int i = minX + 1; i < maxX; i++) {
-        //     for (int j = minY + 1; j < maxY; j++) {
-        //         world[i][j] = Tileset.FLOOR;
-        //     }
-        // }
-
-        // for (int i = minX; i <= maxX; i++) {
-        //     world[i][minY] = Tileset.WALL;
-        //     world[i][maxY] = Tileset.WALL;
-        // }
-        // for (int i = minY; i <= maxY; i++) {
-        //     world[minX][i] = Tileset.WALL;
-        //     world[maxX][i] = Tileset.WALL;
-        // }
 
         for (int i = minX; i <= maxX; i++) {
             for (int j = minY; j <= maxY; j++) {
@@ -151,4 +134,6 @@ public class Room {
         }
         return rooms;
     }
+
+
 }
