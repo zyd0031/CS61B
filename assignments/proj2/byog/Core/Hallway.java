@@ -1,10 +1,8 @@
 package byog.Core;
 import java.util.ArrayList;
 import java.util.Comparator;
-import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
-import java.util.Map;
 import java.util.PriorityQueue;
 import java.util.Random;
 import java.util.Set;
@@ -63,7 +61,7 @@ public class Hallway {
         }
     }
 
-    private static void createHallway(TETile[][] world, Edge edge, Random rand){
+    private static Position createHallway(TETile[][] world, Edge edge, Random rand){
         Room r1 = edge.sourceRoom;
         Room r2 = edge.targetRoom;
         Position p1 = generateStarPosition(r1, rand);
@@ -77,6 +75,7 @@ public class Hallway {
         }
         drawSingleHallway(world, p1, turn);
         drawSingleHallway(world, turn, p2);
+        return turn;
     }
 
     private static void drawSingleHallway(TETile[][] world,Position start, Position end){
@@ -115,11 +114,14 @@ public class Hallway {
         return new Position(startX, startY);
     }
 
-    private static void drawHallway(TETile[][] world, List<Room> rooms, Random rand){
+    private static int[][] drawHallway(TETile[][] world, List<Room> rooms, Random rand){
+        int[][] hallwayCorner = new int[Game.WIDTH][Game.HEIGHT];
         List<Edge> edges = primEdgesGenerator(world, rooms);
         for (Edge edge : edges) {
-            createHallway(world, edge, rand);
+            Position turn = createHallway(world, edge, rand);
+            hallwayCorner[turn.getX()][turn.getY()] = 1;
         }
+        return hallwayCorner;
     }
 
     private static void drawWall(TETile[][] world){
@@ -145,16 +147,6 @@ public class Hallway {
                 }
             }
         }
-    }
-
-    private static TETile[][] copyWorld(TETile[][] world){
-        TETile[][] copyOfWorld = new TETile[Game.WIDTH][Game.HEIGHT];
-        for (int i = 0; i < Game.WIDTH; i++) {
-            for (int j = 0; j < Game.HEIGHT; j++) {
-                copyOfWorld[i][j] = world[i][j];
-            }
-        }
-        return copyOfWorld;
     }
 
     private static int[][] roomCorner(List<Room> rooms){
@@ -184,17 +176,31 @@ public class Hallway {
         }
     }
 
-    public static void drawHallways(TETile[][] world, List<Room> rooms, Random rand){
-        drawHallway(world, rooms, rand);
-        drawWall(world);
-        drawRoomCorner(world, rooms);
+    private static void drawHallwayCorner(TETile[][] world, int[][] turns){
+        for (int i = 0; i < Game.WIDTH; i++) {
+            for (int j = 0; j < Game.HEIGHT; j++) {
+                if (turns[i][j] == 1){
+                    if ( (i - 1) >= 0 && (j - 1) >= 0 && world[i - 1][j - 1] == Tileset.NOTHING){
+                        world[i - 1][j - 1] = Tileset.WALL;
+                    }
+                    if ( (i + 1) < Game.WIDTH && (j - 1) >= 0 && world[i + 1][j - 1] == Tileset.NOTHING){
+                        world[i + 1][j - 1] = Tileset.WALL;
+                    }
+                    if ( (j + 1) < Game.HEIGHT && (i - 1) >= 0 && world[i - 1][j + 1] == Tileset.NOTHING){
+                        world[i - 1][j + 1] = Tileset.WALL;
+                    }
+                    if ( (i + 1) < Game.WIDTH && (j + 1) < Game.HEIGHT && world[i + 1][j + 1] == Tileset.NOTHING){
+                        world[i + 1][j + 1] = Tileset.WALL;
+                    }
+                }
+            }
+        }
     }
 
-
-
-
-
-
-
-
+    public static void drawHallways(TETile[][] world, List<Room> rooms, Random rand){
+        int[][] turns = drawHallway(world, rooms, rand);
+        drawWall(world);
+        drawRoomCorner(world, rooms);
+        drawHallwayCorner(world, turns);
+    }
 }
