@@ -1,6 +1,7 @@
 package byog.Core;
 
 import java.util.ArrayList;
+import java.util.List;
 import java.util.Random;
 
 import byog.TileEngine.TERenderer;
@@ -10,7 +11,6 @@ import static byog.lab5.HexWorld.initializeTeTile;
 
 public class RoomTest {
 
-    TERenderer ter = new TERenderer();
     /* Feel free to change the width and height. */
     public static final int WIDTH = 80;
     public static final int HEIGHT = 30;
@@ -21,7 +21,7 @@ public class RoomTest {
         TETile[][] finalWorldFrame = initializeTeTile(WIDTH, HEIGHT);
         long seed = 123;
         Random rand = new Random(seed);
-        ArrayList<Room> rooms = new ArrayList<>();
+        List<Room> rooms = new ArrayList<>();
         Room.generateRooms(finalWorldFrame, rand, rooms);
         ter.renderFrame(finalWorldFrame);
 

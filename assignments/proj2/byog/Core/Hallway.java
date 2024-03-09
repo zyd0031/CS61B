@@ -197,10 +197,23 @@ public class Hallway {
         }
     }
 
-    public static void drawHallways(TETile[][] world, List<Room> rooms, Random rand){
+    private static Position drawPlayer(TETile[][] world, Random rand){
+        while(true){
+            int x = rand.nextInt(Game.WIDTH);
+            int y = rand.nextInt(Game.HEIGHT);
+            if (world[x][y] == Tileset.FLOOR){
+                world[x][y] = Tileset.PLAYER;
+                return new Position(x, y);
+            }
+        }
+    }
+
+    public static Position drawHallways(TETile[][] world, List<Room> rooms, Random rand){
         int[][] turns = drawHallway(world, rooms, rand);
         drawWall(world);
         drawRoomCorner(world, rooms);
         drawHallwayCorner(world, turns);
+        Position playerPosition =  drawPlayer(world, rand);
+        return playerPosition;
     }
 }
